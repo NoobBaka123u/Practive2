@@ -1,7 +1,7 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <fstream>
-#include <iomanip>
+#define MAX 50
 
 using namespace std;
 
@@ -10,46 +10,37 @@ struct student
 	string name;
 	int id;
 	float score;
+
+	void print()
+	{
+		printf("%-5d %-20s %-f", id, name.c_str(), score);
+	}
 };
 
 typedef struct student Student;
 
-struct liststudent
-{
-	Student *arr;
-	int n;
-};
+Student *student = new Student[MAX];
 
-typedef struct liststudent ListStudent;
+static int length = 0;
 
 void PrintMenu(); //menu
 
-void InputStudent(); //Input a sutdent 
-
-void OutputStudent();
-
-void InputListStudent(ListStudent &ls);
-
-void OutputListStudent(ListStudent ls);
+void Input();
 
 void PrintList(); //print studen list
 
-void Process(int choose); //choose value
+void Process(int); //choose value
 
-void SaveToFile(string fileName, ListStudent ls); //save all student to file
+void SaveToFile(string); //save all student to file
 
-void LoadFromFile(string fileName);
+void LoadFromFile(string);
 
-void Replace(string &str);
+void Replace(string &, char, char);
 
-ListStudent ls;
-
-int main() {
-	cout << "Input student numbers: ";
-	cin >> ls.n;
-	ls.arr = new Student[ls.n];
-
+void main()
+{
 	int choose;
+
 	while (true)
 	{
 		PrintMenu();
@@ -64,11 +55,9 @@ int main() {
 			break;
 		}
 	}
-	system("pause");
-	return 0;
 }
 
-void PrintMenu() 
+void PrintMenu()
 {
 	cout << "----------------------MENU--------------------" << endl;
 	cout << "1. Input" << endl;
@@ -78,107 +67,126 @@ void PrintMenu()
 	cout << "0. Exit" << endl;
 }
 
-void InputStudent(Student &s)
+
+void Input()
 {
-	Student student;
-	cout << "id: ";
-	cin >> student.id;
-	
+	Student *pStudent = &student[length++];
+
+	cout << "Id: ";
+	cin >> pStudent->id;
+
 	cin.ignore();
-	 
-	cout << "full name: ";
-	getline(cin, student.name);
 
-	cout << "score: ";
-	cin >> student.score;
-	s = student;
-}
+	cout << "Name: ";
+	getline(cin, pStudent->name);
 
-void OutputStudent(Student &s)
-{
-	cout << s.id << "      " << s.name << "          " << s.score;
-}
+	cout << "Score: ";
+	cin >> pStudent->score;
 
-void InputListStudent(ListStudent &ls)
-{
-	for (int i = 0; i < ls.n; i++)
-	{
-		cout << "/nInput student " << i + 1 << endl;
-		InputStudent(ls.arr[i]);
-	}
-}
-
-void OutputListStudent(ListStudent ls)
-{
-	for (int i = 0; i < ls.n; i++)
-	{
-		OutputStudent(ls.arr[i]);
-	}
 }
 
 void PrintList()
 {
-	printf("%--5s %-20s %s\n", "ID", "FULL NAME", "SCORE");
-	
+	Student *pStudent = student;
+	printf("%-5s %-20s %s\n", "ID", "FULL NAME", "SCORE");
+	for (int i = 0; i < length; i++)
+	{
+		(pStudent + i)->print();
+		cout << endl;
+	}
 }
 
 void Process(int choose)
 {
 	if (choose == 1)
 	{
-		InputListStudent(ls);
-		
+		Input();
 	}
-	if (choose == 2)
+	else if (choose == 2)
 	{
 		cout << endl;
 		PrintList();
-		OutputListStudent(ls);
 		cout << endl;
 	}
 	else if (choose == 3)
 	{
-//		SaveToFile("saveFile.txt");
+		SaveToFile("save.txt");
 	}
 	else if (choose == 4)
 	{
-//		LoadFromFile("loadFile.txt");
+		LoadFromFile("save.txt");
 		PrintList();
 	}
-	else if (choose < 1 || choose > 4)
-	{
-		cout << "Your choose wrong!";
-	}
+
 }
-/*
-void SaveToFile(string fileName, ListStudent ls)
+
+void SaveToFile(string fileName)
 {
-	FILE *f = fopen(fileName.c_str(), "w");
-	if (f != nullptr)
+	ofstream outFile;
+	outFile.open(fileName);
+	if (outFile.is_open())
 	{
 		//save number
-		fprintf(f, "%d", ls.n);
-		for (int i = 0; i < ls.n; i++)
+		outFile << length << endl;
+		Student *pStudent = student;
+		for (int i = 0; i < length; i++)
 		{
-			Person p = g_PersonList.at(i);
-
-			string name(p.name);
-			string address(p.address);
+			
+			string name(pStudent->name);
 			Replace(name, ' ', '_');
-			Replace(address, ' ', '_');
 
-			fprintf(f, "\n%s %d %s", name.c_str(), p.age, address.c_str());
+
+			outFile << pStudent->id << " " << name << " " << pStudent->score << endl;
 		}
 
 		cout << "Save to " << fileName << endl;
 
-		fclose(f);
+		outFile.close();
 	}
 	else
 	{
 		cout << "ERROR" << endl;
 	}
 }
-*/
 
+void LoadFromFile(string fileName)
+{
+	ifstream inFile;
+	inFile.open(fileName);
+	student = new Student[MAX];
+	if (inFile.is_open())
+	{
 
+		inFile >> length;
+
+		for (int i = 0; i < length; i++)
+		{
+			Student *pStudent = &student[i];
+			inFile >> (pStudent)->id;
+
+			string name;
+			inFile >> name;
+			Replace(name, '_', ' ');
+			(pStudent)->name = name;
+
+			inFile >> (pStudent)->score;
+		}
+
+		inFile.close();
+	}
+	else
+	{
+		cout << "LOAD ERROR" << endl;
+	}
+}
+
+void Replace(string &str, char to, char by)
+{
+	for (int i = 0; i < str.length(); i++)
+	{
+		if (str.at(i) == to)
+		{
+			str.at(i) = by;
+		}
+	}
+}

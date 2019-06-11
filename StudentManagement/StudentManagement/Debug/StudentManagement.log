@@ -1,0 +1,4 @@
+﻿  StudentManagement.cpp
+d:\practive2\studentmanagement\studentmanagement\studentmanagement.cpp(185): warning C4018: '<': signed/unsigned mismatch
+  StudentManagement.vcxproj -> D:\Practive2\StudentManagement\Debug\StudentManagement.exe
+  StudentManagement.vcxproj -> D:\Practive2\StudentManagement\Debug\StudentManagement.pdb (Partial PDB)

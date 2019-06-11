@@ -1,20 +1,36 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#define MAX 50
 
 using namespace std;
 
-struct Student
+struct student
 {
 	string name;
 	int id;
 	float score;
-
 };
+
+typedef struct student Student;
+
+struct liststudent
+{
+	Student *arr;
+	int n;
+};
+
+typedef struct liststudent ListStudent;
 
 void PrintMenu(); //menu
 
-Student Input(); //Input a sutdent 
+void InputStudent(); //Input a sutdent 
+
+void OutputStudent();
+
+void InputListStudent(ListStudent &ls);
+
+void OutputListStudent(ListStudent ls);
 
 void PrintList(); //print studen list
 
@@ -41,8 +57,7 @@ void PrintMenu()
 	cout << "0. Exit" << endl;
 }
 
-
-Student Input()
+void InputStudent(Student &s)
 {
 	Student student;
 	cout << "id: ";
@@ -56,5 +71,61 @@ Student Input()
 	cout << "score: ";
 	cin >> student.score;
 
-	return student;
+}
+
+void OutputStudent(Student &s)
+{
+	cout << s.id << " " << s.name << "       " << s.score;
+}
+
+void InputListStudent(ListStudent &ls)
+{
+	for (int i = 0; i < ls.n; i++)
+	{
+		cout << "\nInput student " << i + 1 << endl;
+		InputStudent(ls.arr[i]);
+	}
+}
+
+void OutputListStudent(ListStudent ls)
+{
+	for (int i = 0; i < ls.n; i++)
+	{
+		cout << "\nStudent " << i + 1 << endl;
+		OutputStudent(ls.arr[i]);
+	}
+}
+
+void PrintList()
+{
+	printf("%--5s %-20s %s\n", "ID", "FULL NAME", "SCORE");
+	
+}
+
+void Process(int choose)
+{
+	if (choose == 1)
+	{
+		InputStudent();
+		
+	}
+	if (choose == 2)
+	{
+		cout << endl;
+		PrintList();
+		cout << endl;
+	}
+	else if (choose == 3)
+	{
+		SaveToFile("saveFile.txt");
+	}
+	else if (choose == 4)
+	{
+		LoadFromFile("loadFile.txt");
+		PrintList();
+	}
+	else if (choose < 1 || choose > 4)
+	{
+		cout << "Your choose wrong!";
+	}
 }
